@@ -18,6 +18,12 @@ const $storyForm = $("#story-form");
 const $submitAnchor = $("#submit-anchor");
 const $storySubmitBtn = $("#storySubmit");
 
+const $emptyStar = '<i class="far fa-star"></i>';
+const $boldStar = '<i class="fas fa-star"></i>';
+
+const $favStoriesList = $('#fav-stories-list');
+const $myStoriesList = $('#my-stories-list');
+
 /** To make it easier for individual components to show just themselves, this
  * is a useful function that hides pretty much everything on the page. After
  * calling this, individual components can re-show just what they want.
@@ -44,6 +50,23 @@ async function start() {
   // if we got a logged-in user
   if (currentUser) updateUIOnUserLogin();
 }
+
+// Add star to page
+// check if favorites array is on page
+// if on page, then make star bold
+// else, do nothing
+
+
+
+
+
+//ensure stories show up in the right sections
+// favorites & ownStories
+
+
+
+
+
 
 // Once the DOM is entirely loaded, begin the app
 

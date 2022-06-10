@@ -76,32 +76,27 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  static async addStory(currentUser, data) {
+  async addStory(currentUser, storyData) {
     // UNIMPLEMENTED: complete this function!
     // to make post use axios.post(url, [data,])
 
-    // add story to database 
-    // make post to /stories
-    // place token in the body for posts requests.  Can be placed in the query string for GET requests
-    // take the data from a form
-    // pass into functions as parameters
-
-    // store user token in a var
-    // capture story inputs and store in a var (author, title, url)
-
-    // convert keys to JSON
-
-    // can we access currentUser yet? 
     const token = currentUser.loginToken;
+    const dataFormat = {"token": `${token}`, 
+      "story": storyData
+    }
 
-    //getStory from making a new story
-    const response = await axios.post(
-      `${BASE_URL}/stories`, 
-      {
-        "token": `${token}`,
-        "story": data
+      const response = await axios({
+        method: "POST",
+        url: `${BASE_URL}/stories`,
+        data: dataFormat
       });
-    return response;
+
+    const storyInst = new Story(response.data.story);
+    
+    this.stories.unshift(storyInst);
+    currentUser.ownStories.unshift(storyInst);
+            
+    return storyInst;
   }
 }
 
@@ -225,4 +220,96 @@ class User {
       return null;
     }
   }
+
+  async addFavoriteStory(storyId){
+    // Call API
+    // Return new favorite
+    // Add new story to the DOM
+
+    // https://private-anon-764bc013eb-hackorsnoozev3.apiary-mock.com/users/hueter/favorites/32d336da-98cd-4010-bb39-1d789b9bef50
+
+    // `/users/${username}/favorites/${storyId}`
+    const username = this.username;
+    const token = this.loginToken;
+    // const storyId = currentUser
+    // most key data available via 'this'
+
+    const res = await axios({
+      method: "POST",
+      url: `${BASE_URL}/users/${username}/favorites/${storyId}`,
+      data: {token},
+    });
+
+    const story = await axios({
+      method: "GET",
+      url: `${BASE_URL}/stories/${storyId}`,
+      params: {token},
+    });
+
+    const storyInst = new Story(story.data.story)
+    // story isn't in a Story format
+    this.favorites.push(storyInst);
+    // push to favorites array
+    // Or append to the DOM (UI) 
+    // else it won't be added until page load
+
+  
+    return res;
+  }
+  async removeFavoriteStory(storyId){
+
+    const username = this.username;
+    const token = this.loginToken;
+
+    const favorites = this.favorites;
+
+    const res = await axios({
+      method: "DELETE",
+      url: `${BASE_URL}/users/${username}/favorites/${storyId}`,
+      data: {token},
+    });
+
+    const story = await axios({
+      method: "GET",
+      url: `${BASE_URL}/stories/${storyId}`,
+      params: {token},
+    });
+
+    this.favorites = this.favorites.filter(f => f.storyId !== storyId);
+
+    // currentUser.favorites[0].storyId
+
+    console.log(favorites)
+
+
+    return res;
+  }
+
+  async _addOrRemoveStory(storyId){
+    //assign click listener to star object
+    //check for storyId in user favorites
+    const favorites = this.favorites;
+
+    // use array method that returns T/F
+
+    const isFav = favorites.some(s => s.storyId === storyId);
+
+    if(isFav){
+      await this.removeFavoriteStory(storyId);
+    }else{
+      await this.addFavoriteStory(storyId);
+    }
+
+
+    //if present, call remove story
+    //else call add story
+    //check if story is already 
+
+
+  }
+
 }
+
+// const newFav = await currentUser.addFavoriteStory(currentUser,'e6493a14-4518-4f93-9950-50acf354758a')
+// const removedFav = await currentUser.removeFavoriteStory(currentUser,'e6493a14-4518-4f93-9950-50acf354758a')
+// const addedOrRemovedFav = await currentUser._addOrRemoveStory('e6493a14-4518-4f93-9950-50acf354758a')
