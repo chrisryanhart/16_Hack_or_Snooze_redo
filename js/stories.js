@@ -53,6 +53,8 @@ async function handleFavoriteClick(e){
 
 }
 
+$favStoriesList.on("click",".fa-star",handleFavoriteClick);
+
 
 function putStoriesOnPage() {
   console.debug("putStoriesOnPage");
@@ -68,20 +70,24 @@ function putStoriesOnPage() {
 
     // Have to loop through this array b/c array has story objects
     // you do have to loop through two times
-    const favorites = currentUser.favorites
 
-    const isFavorite = favorites.some(f => f.storyId === story.storyId)
+    if (currentUser){
+      const favorites = currentUser.favorites
 
-    // will need to skip section if no user is logged in
-
-    if(isFavorite){
-      // add full star
-      $story.prepend($boldStar);
-   
-    }else{
-      // add empty star
-      $story.prepend($emptyStar);
+      const isFavorite = favorites.some(f => f.storyId === story.storyId)
+  
+      // will need to skip section if no user is logged in
+  
+      if(isFavorite){
+        // add full star
+        $story.prepend($boldStar);
+     
+      }else{
+        // add empty star
+        $story.prepend($emptyStar);
+      }
     }
+
 
     // add click listener
 
@@ -100,11 +106,10 @@ function putStoriesOnPage() {
 
     $allStoriesList.append($story);
   }
-
- 
-
   $allStoriesList.show();
 }
+
+
 
 // $('i').on("click", handleFavoriteClick)
 
@@ -159,6 +164,82 @@ async function newStoryToList(e){
 }
 
 $storySubmitBtn.on("click", newStoryToList)
+
+function loadFavorites(){
+  console.log('loaded favorites');
+
+  $favStoriesList.empty();
+
+  if(currentUser.favorites.length === 0){
+    return "no stories to add";
+  }else{
+    for(let story of currentUser.favorites){
+      let $story = generateStoryMarkup(story);
+      addStar(story, $story);
+      $favStoriesList.append($story);
+    }
+  }
+}
+
+function addStar(storyFromList, $story){
+  const favorites = currentUser.favorites
+
+  const isFavorite = favorites.some(f => f.storyId === storyFromList.storyId)
+
+  // will need to skip section if no user is logged in
+
+  if(isFavorite){
+    // add full star
+    $story.prepend($boldStar);
+ 
+  }else{
+    // add empty star
+    $story.prepend($emptyStar);
+  }
+}
+
+function populateUserStories(){
+  //take currentUser.ownstories
+  //add to array
+  //update the DOM
+  //send POST request to the API
+  $myStoriesList.empty();
+
+  for (let story of currentUser.ownStories){
+    //generate HTML markup
+    let $story = generateStoryMarkup(story);
+    addStar(story, $story);
+    // $story.prepend
+    $story.prepend($trashCan);
+    $myStoriesList.append($story);
+
+    //everytime I click on myStoriesList, 
+    //add trashcan
+    //append to list 
+  }
+}
+
+$myStoriesList.on("click",'.fa-trash',deleteStory);
+
+async function deleteStory(e){
+  // Remove parent storyß
+  const $storyLi = $(e.target.parentElement);
+  const storyId = $storyLi.attr('id');
+
+  e.target.parentElement.remove(); 
+
+  
+  // Remove from DOM and API
+  // implement with click listener
+  // do I need to get a story instanceß
+
+  await storyList.deleteStoryFromAPI(currentUser,storyId);
+  const test = 1;
+  
+}
+
+$myStoriesList.on("click",'.fa-star',handleFavoriteClick);
+
 
 // let newStory = await StoryList.addStory(currentUser, {title: "happy", author: 
 //"Me", url: "http://meow.com"})

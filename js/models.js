@@ -27,7 +27,10 @@ class Story {
 
   getHostName() {
     // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    const url = new URL(this.url);
+    const hostName = url.hostname;
+
+    return hostName;
   }
 }
 
@@ -97,6 +100,32 @@ class StoryList {
     currentUser.ownStories.unshift(storyInst);
             
     return storyInst;
+  }
+
+  // async deleteStory(){
+  //   //delete story from user stories and favorites
+
+  // }
+
+  async deleteStoryFromAPI(user,storyId){
+    console.log('deleteStoryFromAPI');
+
+    const token = {"token": `${user.loginToken}`}
+
+    const res = await axios({
+      method: "DELETE",
+      url: `${BASE_URL}/stories/${storyId}`,
+      data: token
+    })
+
+    //remove from storylist
+    this.stories = this.stories.filter(s => s.storyId !== storyId);
+
+    user.favorites = user.favorites.filter(s => s.storyId !== storyId);
+
+    user.ownStories = user.ownStories.filter(s => s.storyId !== storyId);
+
+    return res;
   }
 }
 
@@ -256,7 +285,9 @@ class User {
   
     return res;
   }
+
   async removeFavoriteStory(storyId){
+    console.log('enetered removeFavStory');
 
     const username = this.username;
     const token = this.loginToken;
@@ -277,10 +308,14 @@ class User {
 
     this.favorites = this.favorites.filter(f => f.storyId !== storyId);
 
+    loadFavorites();
+
+    //populate DOM
+
+
     // currentUser.favorites[0].storyId
 
     console.log(favorites)
-
 
     return res;
   }
@@ -307,6 +342,8 @@ class User {
 
 
   }
+
+
 
 }
 

@@ -39,8 +39,38 @@ function updateNavOnLogin() {
 
 function showSubmitStory(evt){
   evt.preventDefault();
+  hidePageComponents();
+  putStoriesOnPage();
   $storyForm.show();
 }
 
 $submitAnchor.on("click", showSubmitStory);
 
+// Add star to page
+// check if favorites array is on page
+// if on page, then make star bold
+// else, do nothing
+
+//add favorites to the DOM
+
+
+function showFavorites(){
+  // hide all stories
+  hidePageComponents();
+  loadFavorites();
+  
+  
+  $favStoriesList.show();
+}
+
+function showMyStories(){
+  populateUserStories()
+  hidePageComponents();
+  $myStoriesList.show();
+}
+
+$favStoriesList.on("click",'.star',showFavorites)
+
+$navFavorites.on("click",showFavorites);
+
+$navMyStories.on("click",showMyStories);

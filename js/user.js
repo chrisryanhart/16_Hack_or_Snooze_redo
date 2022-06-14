@@ -24,6 +24,10 @@ async function login(evt) {
   $loginForm.trigger("reset");
 
   saveUserCredentialsInLocalStorage();
+  
+  //pass in currentUser?
+  await start();
+
   updateUIOnUserLogin();
 }
 
@@ -59,6 +63,7 @@ $signupForm.on("submit", signup);
 function logout(evt) {
   console.debug("logout", evt);
   localStorage.clear();
+  currentUser = {};
   location.reload();
 }
 
@@ -80,6 +85,8 @@ async function checkForRememberedUser() {
 
   // try to log in with these credentials (will be null if login failed)
   currentUser = await User.loginViaStoredCredentials(token, username);
+  const test =1;
+  return currentUser;
 }
 
 /** Sync current user information to localStorage.
@@ -107,10 +114,16 @@ function saveUserCredentialsInLocalStorage() {
  * - generate the user profile part of the page
  */
 
-function updateUIOnUserLogin() {
+async function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
-  $allStoriesList.show();
+  // $allStoriesList.show();
+  // $allNavLinks.show();
 
   updateNavOnLogin();
+}
+
+function showStandardDashboard(){
+  $submitAnchor.hide();
+  
 }
